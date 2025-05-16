@@ -4,6 +4,12 @@ import { STARTUP_BY_ID_QUERY } from '@/sanity/lib/queries'
 import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
+import markdonwit from 'markdown-it'
+import { Suspense } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
+import View from '@/components/View'
+
+const md = markdonwit()
 
 export const experimental_ppr = true
 
@@ -15,6 +21,8 @@ const page = async ({params} : {params: Promise< {id: string}>}) => {
 
     if (!post) return notFound()
 
+        const parsedContent = md.render(post?.pitch || '')
+
     console.log(post.author)
     
     return (
@@ -25,7 +33,7 @@ const page = async ({params} : {params: Promise< {id: string}>}) => {
             <p className='sub-heading !max-w-5xl'>{post.description}</p>
         </section>
 
-        <section className='section-container'>
+        <section className='section_container'>
             <img
                 src={post.image} 
                 alt='thumbnail'
@@ -49,8 +57,26 @@ const page = async ({params} : {params: Promise< {id: string}>}) => {
                             <p className='text-16-medium !text-black-300'> @{post.author.username}</p>
                         </div>
                     </Link>
+
+                    <p className='category-tag'>{post.category}</p>
                 </div>
+
+                <h3 className='text-30-bold'>Pitch Details</h3>
+                {parsedContent ? (
+                    <article
+                        className='prose max-w-4xl font-work-sans break-all'
+                        dangerouslySetInnerHTML={{__html: parsedContent}}
+                    />
+                ): (
+                    <p className='no-result'>No deatails provided</p>
+                )}
             </div>
+
+            <hr className='divider' />
+            {/* TODO: EDITOR SELECTED STARTUPS  */}
+
+            <Suspense fallback={<Skeleton className='view_skeleton'/>}></Suspense>
+                <View id={id} />
         </section>
     </>
     )
