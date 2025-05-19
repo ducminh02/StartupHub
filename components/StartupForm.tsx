@@ -1,26 +1,91 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useActionState } from 'react'
+
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
 import MDEditor from '@uiw/react-md-editor'
 import { Button } from './ui/button'
 import { Send } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
+
+import { formSchema } from '@/lib/validation'
+import { z } from 'zod'
+import { useRouter } from 'next/navigation'
+import { createPitch } from '@/lib/actions'
+
 
 const StartupForm = () => {
+
     const [errors, setErrors] = useState<Record<string, string>>({})
+    const {toast} = useToast()
+    const router = useRouter()
+    
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [category, setCategory] = useState('')
+    const [link, setLink] = useState('')
     const [pitch, setPitch] = useState('')
+    
+    const handleFormSubmit = async (prevState: any, formData: FormData) => {
+        try {
+            const formValues = {
+                title: formData.get('title') as string,
+                description: formData.get('description') as string,
+                category: formData.get('category') as string,
+                link: formData.get('link') as string,
+                pitch,
+            }
 
-    const handleFormSubmit = () => {}
+            await formSchema.parseAsync(formValues)
 
-    const [state, formAction, isPending] = setActionState(handelFormSubmit,
-        {
-            error: '',
-            status: 'INITIAL'
-        })
+            console.log(formValues)
+
+            const result = await createPitch(prevState, formData, pitch)
+
+            console.log(result)
+
+            if (result.status == 'SUCCESS') {
+                toast({
+                    title: 'Success',
+                    description: 'Your startup pitch has been created successfully',
+                })
+                router.push(`/startup/${result._id}`)
+            }
+
+            return result
+
+
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                const fieldErrors = error.flatten().fieldErrors
+
+                setErrors( fieldErrors as unknown as Record<string, string>)
+
+                toast({
+                    title: 'Error',
+                    description: 'An unexpected error has occurred',
+                    variant: 'destructive'
+                })
+
+                return {...prevState, error: 'Validation failed', status: 'ERROR'}
+            }
+
+            return {
+                ...prevState,
+                error: 'An unexpected error has occurred',
+                status: 'ERROR',
+            }
+        }
+    }
+
+    const [state, formAction, isPending] = useActionState(handleFormSubmit, {
+        error: '',
+        status: 'INITIAL',
+      })
 
     return (
-        <form action={() => {}} className='startup-form'>
+        <form action={formAction} className='startup-form'>
             <div>
                 <label htmlFor='title' className='startup-form_label'>Title</label>
                 <Input
@@ -28,7 +93,9 @@ const StartupForm = () => {
                     name='title'
                     className='startup-form_input'
                     required
-                    placeholder='Startup Title' 
+                    placeholder='Startup Title'
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)} 
                 />
 
                 {errors.title && <p className='startup-form_error'>{errors.title}</p>}
@@ -41,7 +108,9 @@ const StartupForm = () => {
                     name='description'
                     className='startup-form_textarea'
                     required
-                    placeholder='Startup Description' 
+                    placeholder='Startup Description'
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)} 
                 />
 
                 {errors.description && <p className='startup-form_error'>{errors.description}</p>}
@@ -56,7 +125,9 @@ const StartupForm = () => {
                     name='category'
                     className='startup-form_input'
                     required
-                    placeholder='Startup Category (Tech, Education, Homesharing, etc.)' 
+                    placeholder='Startup Category (Tech, Education, Homesharing, etc.)'
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)} 
                 />
 
                 {errors.category && <p className='startup-form_error'>{errors.cetegory}</p>}
@@ -69,7 +140,9 @@ const StartupForm = () => {
                     name='link'
                     className='startup-form_input'
                     required
-                    placeholder='Startup Link' 
+                    placeholder='Startup Link'
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)} 
                 />
 
                 {errors.title && <p className='startup-form_error'>{errors.title}</p>}
@@ -99,9 +172,13 @@ const StartupForm = () => {
 
             </div>
             
-            <Button type='submit' className='startup-form_btn text-white' disabled={isPending}>
+            <Button
+                type='submit'
+                className='startup-form_btn text-white'
+                disabled={isPending}
+            >
                 {isPending ? 'Submitting ...' : 'Submit Your Pitch'}
-                <Send className='siye-6 ml-2' />
+                <Send className='size-6 ml-2' />
             </Button>
 
         </form>
