@@ -1,12 +1,22 @@
-import NextAuth from "next-auth"
-import GitHub from "next-auth/providers/github"
+import NextAuth from 'next-auth'
+import GitHub from 'next-auth/providers/github'
 import { AUTHOR_BY_GITHUB_ID_QUERY } from './sanity/lib/queries'
 import { client } from './sanity/lib/client'
 import { writeClient } from './sanity/lib/write-client'
 import { token } from './sanity/env'
  
 export const { handlers, signIn, signOut, auth } = NextAuth({
-	providers: [GitHub],
+	providers: [
+		GitHub({
+			authorization: {
+				params: {
+					prompt: 'consent',
+					access_type: 'offline',
+					response_type: 'code'
+				}
+			}
+		})
+	],
 	callbacks: {
 		async signIn({
 			user: {name, email, image},
