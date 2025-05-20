@@ -1,4 +1,3 @@
-import { UserIcon } from 'lucide-react';
 import { defineField, defineType } from 'sanity';
 
 export const startup = defineType({
@@ -54,7 +53,7 @@ export const startup = defineType({
     ],
     preview: {
         select: {
-            title: 'name'
+            title: 'title'
         }
     }
 })

@@ -42,3 +42,8 @@ next-env.d.ts
 yc_crash_course.code-workspace
 
 launch.json
+
+# Sentry Config File
+.env.sentry-build-plugin
+sentry-wizard-installation-error-1747671957585.log
+sentry-wizard-installation-error-1747672025281.log
