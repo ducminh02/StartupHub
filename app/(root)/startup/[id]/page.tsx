@@ -37,7 +37,7 @@ const page = async ({params} : {params: Promise< {id: string}>}) => {
         </section>
 
         <section className='section_container'>
-            <img
+            <Image
                 src={post.image} 
                 alt='thumbnail'
                 className='w-full h-auto rounded-xl'

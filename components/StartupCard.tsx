@@ -1,9 +1,9 @@
 import { cn, formatDate } from "@/lib/utils";
-import { EyeIcon } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from './ui/button';
 import { Author, Startup } from '@/sanity/types';
+import { EyeIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from './ui/button';
 import { Skeleton } from './ui/skeleton';
 
 export type StartupTypeCard = Omit<Startup, 'author'> & {author?: Author}
@@ -47,7 +47,14 @@ const StartupCard = ({ post }: { post: StartupTypeCard }) => {
                 <p className='startup-card_desc'>
                     {description}
                 </p>
-                <img src={image} alt='placeholder' className='startup-card_img' />
+                <Image 
+                    src={image || 'https://placehold.co/400x300'} 
+                    alt='placeholder' 
+                    className='startup-card_img'
+                    width={400}
+                    height={300}
+                    style={{ objectFit: 'cover' }}
+                />
             </Link>
 
             <Button className='flex-between gap-3 mt-5'>
