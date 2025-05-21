@@ -1,19 +1,23 @@
 'use client'
 
-import { useState, useActionState, useEffect } from 'react'
+import { useActionState, useState } from 'react'
 
+import { useToast } from '@/hooks/use-toast'
+import MDEditor from '@uiw/react-md-editor'
+import { Send } from 'lucide-react'
+import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
-import MDEditor from '@uiw/react-md-editor'
-import { Button } from './ui/button'
-import { Send } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
 
-import { formSchema } from '@/lib/validation'
-import { z } from 'zod'
-import { useRouter } from 'next/navigation'
 import { createPitch } from '@/lib/actions'
+import { formSchema } from '@/lib/validation'
+import { useRouter } from 'next/navigation'
+import { z } from 'zod'
 
+type FormState = {
+    error?: string;
+    status: 'INITIAL' | 'SUCCESS' | 'ERROR';
+}
 
 const StartupForm = () => {
 
@@ -28,7 +32,7 @@ const StartupForm = () => {
     const [pitch, setPitch] = useState('')
 
     
-    const handleFormSubmit = async (prevState: any, formData: FormData) => {
+    const handleFormSubmit = async (prevState: FormState, formData: FormData) => {
         try {
             const formValues = {
                 title: formData.get('title') as string,
@@ -80,10 +84,10 @@ const StartupForm = () => {
         }
     }
 
-    const [state, formAction, isPending] = useActionState(handleFormSubmit, {
+    const [, formAction, isPending] = useActionState(handleFormSubmit, {
         error: '',
         status: 'INITIAL',
-      })
+    })
 
     return (
         <form action={formAction} className='startup-form'>
