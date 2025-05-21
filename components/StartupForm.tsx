@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useActionState } from 'react'
+import { useState, useActionState, useEffect } from 'react'
 
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
@@ -20,12 +20,13 @@ const StartupForm = () => {
     const [errors, setErrors] = useState<Record<string, string>>({})
     const {toast} = useToast()
     const router = useRouter()
-    
+
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [category, setCategory] = useState('')
     const [link, setLink] = useState('')
     const [pitch, setPitch] = useState('')
+
     
     const handleFormSubmit = async (prevState: any, formData: FormData) => {
         try {

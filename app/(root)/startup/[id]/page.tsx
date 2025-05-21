@@ -17,14 +17,10 @@ export const experimental_ppr = true
 const page = async ({params} : {params: Promise< {id: string}>}) => {
     const id = (await params).id
 
-    const [] = await Promise.all( [
+    const [post, {select: topStartups}] = await Promise.all([
         client.fetch(STARTUP_BY_ID_QUERY, {id} ),
         client.fetch(PLAYLIST_BY_SLUG_QUERY, { slug: 'startup-of-the-day-1'})
     ])
-    
-    const post = await client.fetch(STARTUP_BY_ID_QUERY, {id} )
-
-    const {select: topStartups } = await client.fetch(PLAYLIST_BY_SLUG_QUERY, { slug: 'startup-of-the-day-1'})
 
     if (!post) return notFound()
 

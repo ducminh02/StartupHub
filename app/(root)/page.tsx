@@ -1,8 +1,8 @@
-import StartupCard, { StartupTypeCard } from "@/components/StartupCard";
-import SearchForm from "../../components/SearchForm";
-import { STARTUP_QUERY } from '@/sanity/lib/queries';
-import { sanityFetch, SanityLive } from '@/sanity/lib/live';
 import { auth } from '@/auth';
+import StartupCard, { StartupTypeCard } from "@/components/StartupCard";
+import { sanityFetch, SanityLive } from '@/sanity/lib/live';
+import { STARTUP_QUERY } from '@/sanity/lib/queries';
+import SearchForm from "../../components/SearchForm";
 
 export default async function Home({searchParams} : {
 	searchParams: Promise <{query?: string }>
